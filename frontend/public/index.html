@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CloudShield AI - Antivirus Cloud</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 40px auto; padding: 20px; }
+        .drop-area { border: 2px dashed #ccc; padding: 40px; text-align: center; margin: 20px 0; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 5px; }
+        .clean { background: #d4edda; color: #155724; }
+        .malicious { background: #f8d7da; color: #721c24; }
+        .unknown { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>🛡️ CloudShield AI</h1>
+    <p>Upload file untuk scan malware via AI di cloud.</p>
+
+    <div class="drop-area" id="dropArea">
+        <p>Drag & drop file atau klik untuk upload</p>
+        <input type="file" id="fileInput" style="display:none" />
+        <button onclick="document.getElementById('fileInput').click()">Pilih File</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropArea = document.getElementById('dropArea');
+        const resultDiv = document.getElementById('result');
+
+        // Drag & drop
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#007bff';
+        });
+        dropArea.addEventListener('dragleave', () => dropArea.style.borderColor = '#ccc');
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#ccc';
+            if (e.dataTransfer.files.length) {
+                scanFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) scanFile(e.target.files[0]);
+        });
+
+        async function scanFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            resultDiv.innerHTML = '<p>🔍 Memindai file...</p>';
+
+            try {
+                const res = await fetch('http://localhost:8000/scan', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                let className = 'unknown';
+                let text = '';
+
+                if (data.status === 'malicious') {
+                    className = 'malicious';
+                    text = `⚠️ FILE BERBAHAYA!\nKeyakinan: ${(data.confidence * 100).toFixed(1)}%\nAlasan: ${data.reason}`;
+                } else if (data.status === 'clean') {
+                    className = 'clean';
+                    text = `✅ File aman.\nKeyakinan: ${(data.confidence * 100).toFixed(1)}%`;
+                }
+
+                resultDiv.innerHTML = `<div class="result ${className}"><pre>${text}</pre></div>`;
+            } catch (err) {
+                resultDiv.innerHTML = '<div class="result unknown">❌ Gagal menghubungi server.</div>';
+            }
+        }
+    </script>
+</body>
+  </html>
