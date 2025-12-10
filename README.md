@@ -1,17 +1,36 @@
-# 🛡️ SentinelAI WebGuard
+# 🛡️ CloudShield AI – Antivirus Cloud Berbasis Browser
 
-Antivirus berbasis web + AI — scan file langsung dari browser, tanpa instalasi.
+Sistem antivirus berbasis cloud dengan deteksi AI. Upload file via browser → scan di server → hasil real-time.
 
-## Fitur
-- Upload & scan file dengan AI
-- Deteksi malware/phishing
-- Progressive Web App (PWA)
-- Responsive untuk HP & desktop
+> ⚠️ **Peringatan**: Ini adalah proyek edukatif. Jangan digunakan untuk proteksi keamanan nyata tanpa audit dan sandbox lengkap.
 
-## Teknologi
-- React + Tailwind CSS
-- FastAPI (backend)
-- Cloud-based AI engine
+---
 
-## Demo
-[https://sentinelai-webguard.vercel.app](https://sentinelai-webguard.vercel.app)
+## 🚀 Fitur
+- Upload file via drag & drop
+- Deteksi berbasis:
+  - Hash malware (blacklist)
+  - AI statis (ukuran + entropy + model ML)
+- Hasil real-time di browser
+- Arsitektur cloud-ready (Docker + FastAPI + React/Vite)
+
+---
+
+## 🛠️ Instalasi
+
+### Prasyarat
+- Python 3.9+
+- Node.js 18+
+- Docker (opsional)
+
+### Jalankan Langsung (Tanpa Docker)
+```bash
+# Backend
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+
+# Frontend
+cd frontend
+npm install
+npm run dev
