@@ -1,0 +1,5 @@
+CreateRemoteThread
+WriteProcessMemory
+cmd.exe /c
+powershell -enc
+reg add HKCU
