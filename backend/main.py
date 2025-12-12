@@ -10,7 +10,6 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import PyPDF2
-from openpyxl import load_workbook
 import httpx
 from telegram import Bot
 
@@ -79,6 +78,7 @@ def check_bad_strings(file_path: str, max_size_mb=5) -> list:
         pass
     return bad_found
 
+# GANTI SELURUH FUNGSI extract_metadata dengan:
 def extract_metadata(file_path: str, filename: str):
     metadata = {}
     ext = os.path.splitext(filename)[1].lower()
@@ -86,22 +86,14 @@ def extract_metadata(file_path: str, filename: str):
         if ext == ".pdf":
             with open(file_path, "rb") as f:
                 reader = PyPDF2.PdfReader(f)
-                if reader.metadata:
+                if reader.meta
                     metadata = {
                         "author": str(reader.metadata.get("/Author", "")),
                         "creator": str(reader.metadata.get("/Creator", "")),
                         "producer": str(reader.metadata.get("/Producer", "")),
                         "title": str(reader.metadata.get("/Title", "")),
                     }
-        # elif ext == ".docx":  # Sementara dinonaktifkan di Termux
-#     metadata = {"info": "DOCX metadata disabled in mobile version"}
-        elif ext == ".xlsx":
-            wb = load_workbook(file_path, read_only=True)
-            props = wb.properties
-            metadata = {
-                "creator": props.creator or "",
-                "last_modified_by": props.lastModifiedBy or "",
-            }
+        # XLSX sementara dinonaktifkan di Termux
     except Exception as e:
         metadata["error"] = f"Ekstraksi gagal: {str(e)}"
     return metadata
@@ -127,9 +119,7 @@ async def analyze_file(file_path: str, filename: str):
             risk = "medium" if risk == "low" else risk
 
     metadata = {}
-    if filename.lower().endswith(('.pdf', '.xlsx')):
-        metadata = extract_metadata(file_path, filename)
-
+    if filename.lower().endswith('.pdf'):
     return {
         "filename": filename,
         "hash": file_hash,
