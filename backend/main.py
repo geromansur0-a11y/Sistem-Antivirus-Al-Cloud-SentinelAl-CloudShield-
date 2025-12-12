@@ -1,3 +1,45 @@
+# Tambahkan di bagian atas
+import PyPDF2
+from docx import Document
+from openpyxl import load_workbook
+
+def extract_metadata(file_path: str, filename: str):
+    metadata = {}
+    ext = os.path.splitext(filename)[1].lower()
+    
+    try:
+        if ext == ".pdf":
+            with open(file_path, "rb") as f:
+                reader = PyPDF2.PdfReader(f)
+                if reader.metadata:
+                    metadata = {
+                        "author": reader.metadata.get("/Author", ""),
+                        "creator": reader.metadata.get("/Creator", ""),
+                        "producer": reader.metadata.get("/Producer", ""),
+                        "title": reader.metadata.get("/Title", ""),
+                    }
+        elif ext == ".docx":
+            doc = Document(file_path)
+            core_props = doc.core_properties
+            metadata = {
+                "author": core_props.author or "",
+                "created": str(core_props.created) if core_props.created else "",
+                "last_modified_by": core_props.last_modified_by or "",
+            }
+        elif ext == ".xlsx":
+            wb = load_workbook(file_path, read_only=True)
+            props = wb.properties
+            metadata = {
+                "creator": props.creator or "",
+                "last_modified_by": props.lastModifiedBy or "",
+            }
+    except Exception as e:
+        metadata["error"] = f"Metadata extraction failed: {str(e)}"
+    
+    return metadata
+
+
+
 import os
 import re
 import tempfile
