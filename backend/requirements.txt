@@ -1,9 +1,9 @@
 fastapi
-uvicorn
+uvicorn[standard]
 python-multipart
 slowapi
 PyPDF2
-python-docx
-openpyxl
+python-docx>=0.8.11
+openpyxl>=3.0.0
 httpx
-python-telegram-bot
+python-telegram-bot>=20.0
